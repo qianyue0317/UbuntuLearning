@@ -80,9 +80,6 @@ none                    254244       384    253860 
 none                    254244         0    254244   0% /var/lock
 /dev/sda3             15480852   8684096   6010376  60% /home/work
 root@ubuntu:/#
-当然在/home/work目录，我已经添加了很多东西。
---------------------- 
-作者：Central-Perk 
-来源：CSDN 
-原文：https://blog.csdn.net/centralperk/article/details/7620066 
-版权声明：本文为博主原创文章，转载请附上博文链接！
+
+
+注意： 如果想创建扩展分区，并在扩展分区上创建逻辑分区，需要在新建扩展分区之后，紧接着执行n命令 就会出现创建逻辑分区。
