@@ -1,0 +1,88 @@
+一、创建新分区
+首先查看已经有的分区：
+root@ubuntu:/# fdisk -l
+
+Disk /dev/sda: 32.2 GB, 32212254720 bytes
+255 heads, 63 sectors/track, 3916 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x000e11ac
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *           1        1871    15021056   83  Linux
+/dev/sda2            1871        1958      704513    5  Extended
+/dev/sda5            1871        1958      704512   82  Linux swap / Solaris
+root@ubuntu:/#
+从上面的信息看出/dev/sda1、/dev/sda2两个主分区，那么我们可以创建一个/dev/sda3
+root@ubuntu:/# fdisk /dev/sda
+
+WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
+         switch off the mode (command 'c') and change display units to
+         sectors (command 'u').
+
+Command (m for help)：
+m for help就看的出，输入 m 为帮助；
+Command action
+   a   toggle a bootable flag
+   b   edit bsd disklabel
+   c   toggle the dos compatibility flag
+   d   delete a partition
+   l   list known partition types
+   m   print this menu
+   n   add a new partition
+   o   create a new empty DOS partition table
+   p   print the partition table
+   q   quit without saving changes
+   s   create a new empty Sun disklabel
+   t   change a partition's system id
+   u   change display/entry units
+   v   verify the partition table
+   w   write table to disk and exit
+   x   extra functionality (experts only)
+
+Command (m for help):
+从上面信息知道，n 为添加分区，即新建分区；w 为保存。
+Command (m for help): n
+Command action
+   l   logical (5 or over)
+   p   primary partition (1-4)
+创建逻辑分区还是主分区，这里输入 p 创建主分区。
+如果出现：
+Selected partition 4
+No free sectors available
+表示没有空闲硬盘，这时你得手动在虚拟机上添加。
+接着按默认数据输入，最后记得输入 w 保存。q为退出。
+
+二、格式化新建分区并设置挂载点
+格式化：
+root@ubuntu:/# mkfs.ext4 /dev/sda3
+创建挂载点：
+root@ubuntu:/# mount -t ext4 /dev/sda3 /home/work
+把新建的分区挂载到/home/work目录，/home/work目录大小就为自己先添加的硬盘大小。
+这时你就可以查看到home/work里面有个lost+found目录。
+
+三、让系统开机自动挂载
+
+只要在/etc/fstab中添加一行，做过根文件系统的应该知道：
+
+/dev/sda3       /home/work  ext4    defaults    1   0
+
+重启下就可以见效了。
+
+查看使用情况：
+root@ubuntu:/# df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/sda1             14784996   5147264   8886680  37% /
+none                    248640       208    248432   1% /dev
+none                    254244       248    253996   1% /dev/shm
+none                    254244       384    253860   1% /var/run
+none                    254244         0    254244   0% /var/lock
+/dev/sda3             15480852   8684096   6010376  60% /home/work
+root@ubuntu:/#
+当然在/home/work目录，我已经添加了很多东西。
+--------------------- 
+作者：Central-Perk 
+来源：CSDN 
+原文：https://blog.csdn.net/centralperk/article/details/7620066 
+版权声明：本文为博主原创文章，转载请附上博文链接！
